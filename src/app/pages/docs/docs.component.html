@@ -1,0 +1,72 @@
+<!-- Barra superior con usuario y logout -->
+<header class="topbar">
+  <div class="logo">
+    Efact <span>WEB</span>
+  </div>
+
+  <div class="user-info" *ngIf="auth.currentUser">
+    <span class="user-label">Usuario:</span>
+    <span class="user-value">{{ auth.currentUser }}</span>
+    <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+  </div>
+</header>
+
+<!-- Barra de pestañas y acciones -->
+<div class="header">
+  <div class="tabs">
+    <button class="tab active">Documento</button>
+    <button class="tab">Crear</button>
+    <button class="tab">Convertir a Factura Negociable</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn pdf" (click)="loadPdf()">
+      {{ loadingPdf ? 'Cargando PDF...' : 'PDF' }}
+    </button>
+    <button class="btn xml" (click)="loadXml()">
+      {{ loadingXml ? 'Cargando XML...' : 'XML' }}
+    </button>
+    <button class="btn cdr" (click)="loadCdr()">
+      {{ loadingCdr ? 'Cargando CDR...' : 'CDR' }}
+    </button>
+  </div>
+</div>
+
+<!-- Contenido principal -->
+<div class="content">
+  <!-- Panel lateral ahora con info útil, no vacío -->
+  <aside class="info-panel">
+    <h3>Información</h3>
+    <p><strong>Ticket:</strong></p>
+    <p class="ticket">{{ ticket }}</p>
+
+    <p class="hint">
+      Selecciona <strong>PDF</strong>, <strong>XML</strong> o <strong>CDR</strong> para visualizar el comprobante.
+    </p>
+  </aside>
+
+  <!-- Visor principal -->
+  <section class="viewer">
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <p *ngIf="!error && !activeView" class="placeholder">
+      Aún no has seleccionado ningún tipo de documento. Usa los botones de la parte superior.
+    </p>
+
+    <iframe
+      *ngIf="activeView === 'pdf' && pdfUrl"
+      [src]="pdfUrl"
+      width="100%"
+      height="700px"
+      style="border: none;"
+    ></iframe>
+
+    <pre *ngIf="activeView === 'xml' && xml" class="code-view">
+{{ xml }}
+    </pre>
+
+    <pre *ngIf="activeView === 'cdr' && cdr" class="code-view">
+{{ cdr }}
+    </pre>
+  </section>
+</div>

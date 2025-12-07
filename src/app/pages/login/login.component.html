@@ -1,0 +1,29 @@
+<div class="login-container">
+  <h2>Ingreso a EFACT</h2>
+  <p class="subtitle">Accede con las credenciales proporcionadas para la prueba técnica.</p>
+
+  <label>
+    Usuario (RUC)
+    <input
+      type="text"
+      [(ngModel)]="username"
+      placeholder="Ej: 20111193035"
+    />
+  </label>
+
+  <label>
+    Contraseña
+    <input
+      type="password"
+      [(ngModel)]="password"
+      placeholder="Ingresa tu contraseña"
+      autocomplete="new-password"
+    />
+  </label>
+
+  <button (click)="onLogin()" [disabled]="loading">
+    {{ loading ? 'Ingresando...' : 'Iniciar sesión' }}
+  </button>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+</div>
