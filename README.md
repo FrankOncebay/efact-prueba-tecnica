@@ -52,14 +52,16 @@ La solución desarrollada incluye:
 
 ## 🛠 Tecnologías Utilizadas
 
-| 🧰 Tecnología | 📌 Descripción |
-|-------------|----------------|
-| **Angular 18** | Framework principal del frontend |
-| **TypeScript** | Lenguaje con tipado estático |
-| **Angular Router** | Navegación y guardas |
+| Herramienta | Descripción |
+|-------------|-------------|
+| **Angular 18** | Framework principal |
+| **TypeScript** | Tipado estático |
+| **RxJS** | Manejo de datos asíncronos |
+| **SCSS** | Estilos avanzados |
 | **HttpClient** | Consumo de API REST |
-| **SCSS** | Estilos del proyecto |
-| **Node.js 20 / npm 10** | Entorno y gestor de paquetes |
+| **Angular Router** | Navegación + AuthGuard |
+| **Node.js 20 / npm 10** | Entorno del proyecto |
+| **Git / GitHub** | Control de versiones |
 
 ---
 
