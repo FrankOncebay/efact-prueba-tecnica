@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
@@ -12,6 +13,7 @@ export interface AuthResponse {
 @Injectable({
   providedIn: 'root'
 })
+// Servicio responsable de obtener y almacenar el token OAuth de EFACT.
 export class AuthService {
 
   private authUrl = '/api-efact-ose/oauth/token';
@@ -24,6 +26,7 @@ export class AuthService {
     this.currentUser = localStorage.getItem('efact_user');
   }
 
+// Realiza el flujo OAuth "password" y guarda el access_token en localStorage.
   async login(username: string, password: string) {
     const body = new URLSearchParams();
     body.set('grant_type', 'password');

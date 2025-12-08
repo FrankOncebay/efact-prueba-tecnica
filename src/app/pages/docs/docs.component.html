@@ -1,72 +1,160 @@
-<!-- Barra superior con usuario y logout -->
-<header class="topbar">
-  <div class="logo">
-    Efact <span>WEB</span>
-  </div>
+<div class="docs-page">
+  <!-- Barra superior -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo-box">
+        <span class="logo-letter">E</span>
+      </div>
+      <div class="logo-text">
+        <span class="name">Efact</span>
+        <span class="subtitle">WEB · Comprobantes</span>
+      </div>
+    </div>
 
-  <div class="user-info" *ngIf="auth.currentUser">
-    <span class="user-label">Usuario:</span>
-    <span class="user-value">{{ auth.currentUser }}</span>
-    <button class="logout-btn" (click)="logout()">Cerrar sesión</button>
-  </div>
-</header>
+    <div class="topbar-right">
+      <div class="user-info">
+        <span class="label">Usuario:</span>
+        <span class="value">{{ auth.currentUser }}</span>
+      </div>
+      <button class="btn btn-danger" (click)="logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
 
-<!-- Barra de pestañas y acciones -->
-<div class="header">
-  <div class="tabs">
-    <button class="tab active">Documento</button>
-    <button class="tab">Crear</button>
-    <button class="tab">Convertir a Factura Negociable</button>
-  </div>
+  <!-- Submenú -->
+  <nav class="subnav">
+    <button class="tab tab-active">Documento</button>
+    <button class="tab" disabled>Crear</button>
+    <button class="tab" disabled>Convertir a Factura Negociable</button>
+  </nav>
 
-  <div class="actions">
-    <button class="btn pdf" (click)="loadPdf()">
-      {{ loadingPdf ? 'Cargando PDF...' : 'PDF' }}
-    </button>
-    <button class="btn xml" (click)="loadXml()">
-      {{ loadingXml ? 'Cargando XML...' : 'XML' }}
-    </button>
-    <button class="btn cdr" (click)="loadCdr()">
-      {{ loadingCdr ? 'Cargando CDR...' : 'CDR' }}
-    </button>
-  </div>
-</div>
+  <!-- Contenido principal -->
+  <main class="content">
+    <!-- Panel lateral -->
+    <aside class="side-card">
+      <h2>Información</h2>
 
-<!-- Contenido principal -->
-<div class="content">
-  <!-- Panel lateral ahora con info útil, no vacío -->
-  <aside class="info-panel">
-    <h3>Información</h3>
-    <p><strong>Ticket:</strong></p>
-    <p class="ticket">{{ ticket }}</p>
+      <div class="field">
+        <div class="label">Ticket</div>
+        <div class="ticket-box">
+          <span class="ticket-value">{{ ticket }}</span>
+          <button type="button" class="ticket-copy" (click)="copyTicket()">
+            Copiar
+          </button>
+        </div>
+      </div>
 
-    <p class="hint">
-      Selecciona <strong>PDF</strong>, <strong>XML</strong> o <strong>CDR</strong> para visualizar el comprobante.
-    </p>
-  </aside>
+      <div class="field">
+        <div class="label">Estado</div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Listo para visualizar
+        </div>
+      </div>
 
-  <!-- Visor principal -->
-  <section class="viewer">
-    <p *ngIf="error" class="error">{{ error }}</p>
+      <p class="hint">
+        Selecciona <strong>PDF</strong>, <strong>XML</strong> o
+        <strong>CDR</strong> para mostrar el comprobante.
+      </p>
 
-    <p *ngIf="!error && !activeView" class="placeholder">
-      Aún no has seleccionado ningún tipo de documento. Usa los botones de la parte superior.
-    </p>
+      <div class="buttons-group">
+        <button
+          class="btn btn-doc pdf"
+          [class.active]="activeView === 'pdf'"
+          (click)="loadPdf()"
+          [disabled]="loadingPdf"
+        >
+          PDF
+        </button>
 
-    <iframe
-      *ngIf="activeView === 'pdf' && pdfUrl"
-      [src]="pdfUrl"
-      width="100%"
-      height="700px"
-      style="border: none;"
-    ></iframe>
+        <button
+          class="btn btn-doc xml"
+          [class.active]="activeView === 'xml'"
+          (click)="loadXml()"
+          [disabled]="loadingXml"
+        >
+          XML
+        </button>
 
-    <pre *ngIf="activeView === 'xml' && xml" class="code-view">
-{{ xml }}
-    </pre>
+        <button
+          class="btn btn-doc cdr"
+          [class.active]="activeView === 'cdr'"
+          (click)="loadCdr()"
+          [disabled]="loadingCdr"
+        >
+          CDR
+        </button>
+      </div>
+    </aside>
 
-    <pre *ngIf="activeView === 'cdr' && cdr" class="code-view">
-{{ cdr }}
-    </pre>
-  </section>
+    <!-- Visor -->
+    <section class="viewer-card">
+      <header class="viewer-header">
+        <h2>Visualización de comprobante</h2>
+        <span class="viewer-badge" *ngIf="activeView">
+          {{ activeView.toUpperCase() }}
+        </span>
+      </header>
+
+      <div class="viewer-body">
+        <!-- ✅ Loader SOLO para la vista activa -->
+        <div
+          class="state state-loading"
+          *ngIf="
+            (activeView === 'pdf' && loadingPdf) ||
+            (activeView === 'xml' && loadingXml) ||
+            (activeView === 'cdr' && loadingCdr)
+          "
+        >
+          <div class="spinner"></div>
+          <p>Cargando documento...</p>
+        </div>
+
+        <!-- Sin selección -->
+        <div
+          class="state state-empty"
+          *ngIf="!activeView && !error"
+        >
+          <div class="empty-icon">📄</div>
+          <h3>No hay documento seleccionado</h3>
+          <p>
+            Usa los botones <strong>PDF</strong>, <strong>XML</strong> o
+            <strong>CDR</strong> del panel izquierdo para visualizar el
+            comprobante electrónico.
+          </p>
+        </div>
+
+        <!-- ✅ PDF (corregido) -->
+        <div
+          class="state state-viewer"
+          *ngIf="activeView === 'pdf' && pdfUrl"
+        >
+          <iframe
+            class="pdf-frame"
+            [src]="pdfUrl"
+            title="Comprobante PDF"
+            (load)="onPdfLoaded()"
+          ></iframe>
+        </div>
+
+        <!-- XML -->
+        <pre
+          class="code-view"
+          *ngIf="activeView === 'xml' && xml && !loadingXml"
+        >{{ xml }}</pre>
+
+        <!-- CDR -->
+        <pre
+          class="code-view"
+          *ngIf="activeView === 'cdr' && cdr && !loadingCdr"
+        >{{ cdr }}</pre>
+
+        <!-- Error -->
+        <p class="error-view" *ngIf="error">
+          {{ error }}
+        </p>
+      </div>
+    </section>
+  </main>
 </div>
